@@ -1,8 +1,8 @@
 spring:
   datasource:
-    url: jdbc:postgresql://localhost:5432/assign_java_five
+    url: jdbc:postgresql://dpg-cjdcq5gq339s73f0lbcg-a.oregon-postgres.render.com:5432/database_postgre_example_one
     username: postgres
-    password: password
+    password: 22nzcGPgiAnT6e9bP8sgUm1bGWKp9wsc
     driver-class-name: org.postgresql.Driver
   jpa:
     show-sql: true
