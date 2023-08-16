@@ -1,16 +1,15 @@
-FROM maven:3.6.0
-
+#
+# Build stage
+#
+FROM maven:3.8.3-openjdk-17 AS build
 COPY . .
+RUN mvn clean package -DskipTests
 
-RUN mvn clean package -Pprod -DskipTests
-
-
-FROM openjdk:17-jdk
-
-WORKDIR /app
-
-COPY target/assign-java-five-version-one-1.0.jar /app/assign-java-five-version-one-1.0.jar
-
+#
+# Package stage
+#
+FROM openjdk:17.0.1-jdk-slim
+COPY --from=build /target/assign-java-five-version-one-1.0.jar demo.jar
+# ENV PORT=8080
 EXPOSE 8080
-
-CMD ["java" , "-jar", "assign-java-five-version-one-1.0.jar" ]
+ENTRYPOINT ["java","-jar","demo.jar"]
