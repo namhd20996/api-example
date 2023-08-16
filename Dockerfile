@@ -1,3 +1,10 @@
+FROM maven:3.6.0
+
+COPY . .
+
+RUN mvn clean package -Pprod -DskipTests
+
+
 FROM openjdk:17-jdk
 
 WORKDIR /app
