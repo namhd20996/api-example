@@ -1,7 +1,7 @@
 spring:
   datasource:
     url: jdbc:postgresql://dpg-cjdcq5gq339s73f0lbcg-a.oregon-postgres.render.com:5432/database_postgre_example_one
-    username: postgres
+    username: database_postgre_example_one_user
     password: 22nzcGPgiAnT6e9bP8sgUm1bGWKp9wsc
     driver-class-name: org.postgresql.Driver
   jpa:
@@ -13,7 +13,7 @@ spring:
         enable_lazy_load_no_trans: true
         format_sql: true
     hibernate:
-      ddl-auto: none
+      ddl-auto: create-drop
     database-platform: org.hibernate.dialect.PostgreSQLDialect
   mail:
     host: smtp.gmail.com
