@@ -87,7 +87,8 @@ public class UserServiceImpl implements UserService {
                         userSave
                 )
         );
-        String link = "http://localhost:8080/api/auth/confirm?token=" + jwtToken;
+//        String link = "http://localhost:8080/api/auth/confirm?token=" + jwtToken;
+        String link = "https://example-service-three.onrender.com/api/auth/confirm?token=" + jwtToken;
         emailService.send(userSave.getEmail(), buildEmail(userSave.getUsername(), link, "", false));
         saveUserToken(userSave, jwtToken);
     }
