@@ -3,6 +3,7 @@ package com.example.assign.category;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -19,6 +20,7 @@ public class CategoryController {
         return new ResponseEntity<>(categoryService.addCategory(dto), HttpStatus.CREATED);
     }
 
+    @PreAuthorize("permitAll()")
     @GetMapping("/get-all")
     public ResponseEntity<List<CategoryDTO>> getAllStatus() {
         return new ResponseEntity<>(categoryService.findAllByStatus(1), HttpStatus.OK);
