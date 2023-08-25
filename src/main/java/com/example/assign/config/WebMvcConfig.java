@@ -12,7 +12,6 @@ public class WebMvcConfig implements WebMvcConfigurer {
         registry.addMapping("/**")
                 .allowedOrigins("http://127.0.0.1:5500",
                         "http://localhost:8080",
-                        "https://example-service-three.onrender.com",
                         "https://web-tiki-fake.000webhostapp.com"
                 )
                 .allowedMethods("*")
