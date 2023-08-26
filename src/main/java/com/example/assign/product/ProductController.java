@@ -21,7 +21,6 @@ public class ProductController {
 
     private final ValidationHandle validationHandle;
 
-    @PreAuthorize("permitAll()")
     @GetMapping("/all")
     public ResponseEntity<List<ProductDTO>> get() {
         return new ResponseEntity<>(productService.findAllProduct(), HttpStatus.OK);
@@ -34,6 +33,7 @@ public class ProductController {
         return new ResponseEntity<>(productService.findAllProduct(page, limit), HttpStatus.OK);
     }
 
+    @PreAuthorize("hasAnyAuthority('admin:read')")
     @GetMapping("/all/{status}")
     public ResponseEntity<List<ProductDTO>> getProductsByStatus(@PathVariable("status") Integer status) {
         return new ResponseEntity<>(productService.findProductsByStatus(status), HttpStatus.OK);
@@ -49,6 +49,7 @@ public class ProductController {
         return new ResponseEntity<>(productService.findOneProductById(id), HttpStatus.OK);
     }
 
+    @PreAuthorize("hasAnyAuthority('admin:read')")
     @PostMapping("/add/{uuid}")
     public ResponseEntity<?> post(
             @PathVariable("uuid") UUID uuid,
@@ -60,17 +61,20 @@ public class ProductController {
         return new ResponseEntity<>(HttpStatus.CREATED);
     }
 
+    @PreAuthorize("hasAnyAuthority('admin:read')")
     @PutMapping("/update")
     public String put() {
         return "PUT:: product controller";
     }
 
+    @PreAuthorize("hasAnyAuthority('admin:read')")
     @DeleteMapping("/delete/{uuid}")
     public ResponseEntity<?> delete(@PathVariable("uuid") UUID uuid) {
         productService.deleteProduct(uuid);
         return new ResponseEntity<>(HttpStatus.OK);
     }
 
+    @PreAuthorize("hasAnyAuthority('admin:read')")
     @GetMapping("/statistic/category")
     public ResponseEntity<List<ProductStatisticalRevenue>> statisticByCategory() {
         return new ResponseEntity<>(productService.findAllRevenueByCategory(), HttpStatus.OK);

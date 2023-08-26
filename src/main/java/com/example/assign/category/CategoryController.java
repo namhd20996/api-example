@@ -15,12 +15,12 @@ public class CategoryController {
 
     private final CategoryService categoryService;
 
+    @PreAuthorize("hasAnyAuthority('admin:read')")
     @PostMapping("/add")
     public ResponseEntity<CategoryDTO> addCategory(@RequestBody CategoryDTO dto) {
         return new ResponseEntity<>(categoryService.addCategory(dto), HttpStatus.CREATED);
     }
 
-    @PreAuthorize("permitAll()")
     @GetMapping("/get-all")
     public ResponseEntity<List<CategoryDTO>> getAllStatus() {
         return new ResponseEntity<>(categoryService.findAllByStatus(1), HttpStatus.OK);

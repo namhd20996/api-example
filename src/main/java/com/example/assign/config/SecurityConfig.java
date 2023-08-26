@@ -8,6 +8,7 @@ import org.springframework.security.authentication.AuthenticationProvider;
 import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
+import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.web.SecurityFilterChain;
@@ -31,15 +32,17 @@ public class SecurityConfig {
         http
                 .cors()
                 .and()
-                .csrf()
-                .disable()
-                .authorizeHttpRequests()
-                .requestMatchers("/api/auth/**", "/*", "/WEB-INF/**")
-                .permitAll()
-                .requestMatchers("/api/product/**", "/api/category/**", "/api/order/**").hasAnyAuthority("admin:read")
-                .anyRequest()
-                .authenticated()
-                .and()
+                .authorizeHttpRequests(authConfig -> {
+                    authConfig.requestMatchers("/api/auth/**", "/*", "/WEB-INF/**").permitAll();
+                    authConfig.requestMatchers("/api/product/all",
+                            "/api/product/get-id",
+                            "/api/product/all/category",
+                            "/api/product/").permitAll();
+                    authConfig.requestMatchers("/api/category/get-all").permitAll();
+                    authConfig.requestMatchers("/api/order/**").hasAnyAuthority("admin:read");
+                    authConfig.anyRequest().authenticated();
+                })
+                .csrf(AbstractHttpConfigurer::disable)
                 .sessionManagement()
                 .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
                 .and()

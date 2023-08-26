@@ -52,12 +52,12 @@ public class User extends BaseEntity implements UserDetails {
     private Date dob;
     @Column
     private String verify;
-    @ManyToMany(cascade = CascadeType.ALL)
+    @ManyToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
     @JoinTable(name = "user_role",
             joinColumns = {@JoinColumn(name = "user_id", referencedColumnName = "id")},
             inverseJoinColumns = {@JoinColumn(name = "role_id", referencedColumnName = "id")})
     private List<Role> roles = new ArrayList<>();
-    @OneToMany(mappedBy = "user")
+    @OneToMany(mappedBy = "user", fetch = FetchType.EAGER)
     private List<Token> tokens = new ArrayList<>();
     @OneToMany(mappedBy = "user")
     private List<Order> orders = new ArrayList<>();
