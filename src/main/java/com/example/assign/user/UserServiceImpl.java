@@ -15,6 +15,7 @@ import com.example.assign.token.Token;
 import com.example.assign.token.TokenRepo;
 import com.example.assign.token.TokenType;
 import lombok.RequiredArgsConstructor;
+import org.springframework.core.env.Environment;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -50,6 +51,8 @@ public class UserServiceImpl implements UserService {
 
     private final EmailService emailService;
 
+    private final Environment environment;
+
     private final ConfirmationTokenService confirmationTokenService;
 
     @Override
@@ -68,7 +71,7 @@ public class UserServiceImpl implements UserService {
             throw new ResourceDuplicateException("email is exists!..");
         }
         // List<Role> roles = roleRepo.findRoleByCode("admin:create").stream().toList();
-        List<Role> roles = roleRepo.findRolesByName("ADMIN")
+        List<Role> roles = roleRepo.findRolesByName("USER")
                 .orElseThrow(() -> new ResourceNotFoundException("Role with name not found"));
         User user = User.builder()
                 .username(request.getUsername())
@@ -87,8 +90,7 @@ public class UserServiceImpl implements UserService {
                         userSave
                 )
         );
-//        String link = "http://localhost:8080/api/auth/confirm?token=" + jwtToken;
-        String link = "https://example-service-three.onrender.com/api/auth/confirm?token=" + jwtToken;
+        String link = environment.getProperty("myapp.http-link") + jwtToken;
         emailService.send(userSave.getEmail(), buildEmail(userSave.getUsername(), link, "", false));
         saveUserToken(userSave, jwtToken);
     }
@@ -242,7 +244,14 @@ public class UserServiceImpl implements UserService {
         }
         confirmationTokenService.setConfirmAt(token);
         userRepo.updateUserByEmail(confirmationToken.getUser().getEmail());
-        return "Confirm success!..";
+        return "<body style=\"margin: 0; padding: 0; overflow: hidden; background: #007bff; color: #fff; text-align: center; display: flex; justify-content: center; align-items: center; height: 100vh;\">\n" +
+                "    <div>\n" +
+                "        <h1 style=\"font-size: 24px;\">Chào mừng đến với trang web của chúng tôi</h1>\n" +
+                "        <p style=\"font-size: 16px;\">Chúc mừng bạn đã kích hoạt thành công tài khoản!</p>\n" +
+                "        <p style=\"font-size: 16px;\">Bạn có thể quay lại trang web của chúng tôi để đăng nhập!</p>\n" +
+                "        <a href=\"#\" style=\"background-color: #fff; color: #007bff; text-decoration: none; font-size: 16px; padding: 10px 20px; border-radius: 5px;\">Bắt đầu</a>\n" +
+                "    </div>\n" +
+                "</body>";
     }
 
     @Override

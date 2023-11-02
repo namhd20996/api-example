@@ -3,7 +3,10 @@ package com.example.assign.category;
 import com.example.assign.product.ProductDTO;
 import com.example.assign.util.BaseDTO;
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import lombok.*;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 import lombok.experimental.SuperBuilder;
 
 import java.util.ArrayList;
@@ -19,8 +22,5 @@ public class CategoryDTO extends BaseDTO {
     private String name;
     private String description;
     private String image;
-    @JsonIgnore
     private Integer status;
-    @JsonIgnore
-    private List<ProductDTO> products = new ArrayList<>();
 }

@@ -2,6 +2,7 @@ package com.example.assign.category;
 
 import com.example.assign.exception.ApiRequestException;
 import com.example.assign.exception.ResourceDuplicateException;
+import com.example.assign.exception.ResourceNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -27,6 +28,34 @@ public class CategoryServiceImpl implements CategoryService {
         Category category = converter.toEntity(dto);
         category.setStatus(1);
         return converter.toDTO(categoryRepo.save(category));
+    }
+
+    @Override
+    public void updateCategory(CategoryUpdateRequest request) {
+        Category category = getCategory(request.getId());
+
+        if (!category.getName().equals(request.getName()))
+            category.setName(request.getName());
+
+        if (category.getImage() == null || !category.getImage().equals(request.getImage()))
+            category.setImage(request.getImage());
+
+        if (category.getDescription() == null || !category.getDescription().equals(request.getDescription()))
+            category.setDescription(request.getDescription());
+
+        categoryRepo.save(category);
+    }
+
+    private Category getCategory(UUID categoryId) {
+        return categoryRepo.findById(categoryId)
+                .orElseThrow(() -> new ResourceNotFoundException("find category by id " + categoryId + " not found!."));
+    }
+
+    @Override
+    public void deleteCategory(UUID categoryId) {
+        Category category = getCategory(categoryId);
+        category.setStatus(0);
+        categoryRepo.save(category);
     }
 
     @Override

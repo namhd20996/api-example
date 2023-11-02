@@ -22,22 +22,31 @@ public class ProductController {
     private final ValidationHandle validationHandle;
 
     @GetMapping("/all")
-    public ResponseEntity<List<ProductDTO>> get() {
-        return new ResponseEntity<>(productService.findAllProduct(), HttpStatus.OK);
+    public ResponseEntity<List<ProductDTO>> get(
+            @RequestParam(value = "price", required = false) String price,
+            @RequestParam(value = "bestSale", required = false) String bestSale,
+            @RequestParam(value = "popular", required = false) String popular
+    ) {
+        return new ResponseEntity<>(productService.findAllProduct(price, bestSale, popular), HttpStatus.OK);
     }
 
     @GetMapping("/all/manager/{page}/{limit}")
     public ResponseEntity<ProductResponse> getProducts(@PathVariable("page") Integer page,
-                                                       @PathVariable("limit") Integer limit)
-    {
+                                                       @PathVariable("limit") Integer limit) {
         return new ResponseEntity<>(productService.findAllProduct(page, limit), HttpStatus.OK);
     }
 
-    @PreAuthorize("hasAnyAuthority('admin:read')")
-    @GetMapping("/all/{status}")
-    public ResponseEntity<List<ProductDTO>> getProductsByStatus(@PathVariable("status") Integer status) {
-        return new ResponseEntity<>(productService.findProductsByStatus(status), HttpStatus.OK);
+    @GetMapping("/all/name")
+    public ResponseEntity<List<ProductDTO>> getProductsByName(@RequestParam("name") String name
+    ) {
+        return new ResponseEntity<>(productService.findProductsByName(name), HttpStatus.OK);
     }
+
+//    @PreAuthorize("hasAnyAuthority('admin:read')")
+//    @GetMapping("/all/{status}")
+//    public ResponseEntity<List<ProductDTO>> getProductsByStatus(@PathVariable("status") Integer status) {
+//        return new ResponseEntity<>(productService.findProductsByStatus(status), HttpStatus.OK);
+//    }
 
     @GetMapping("/all/category")
     public ResponseEntity<List<ProductDTO>> getAllByCategory(@RequestParam("id") UUID id) {
@@ -62,9 +71,15 @@ public class ProductController {
     }
 
     @PreAuthorize("hasAnyAuthority('admin:read')")
-    @PutMapping("/update")
-    public String put() {
-        return "PUT:: product controller";
+    @PutMapping("/update/{cid}")
+    public ResponseEntity<?> put(
+            @Validated @RequestBody ProductUpdateRequest request,
+            @PathVariable("cid") UUID cid,
+            Errors errors
+    ) {
+        validationHandle.handleValidate(errors);
+        productService.updateProduct(request, cid);
+        return new ResponseEntity<>(HttpStatus.OK);
     }
 
     @PreAuthorize("hasAnyAuthority('admin:read')")

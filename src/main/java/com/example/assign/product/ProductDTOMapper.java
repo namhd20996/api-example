@@ -1,15 +1,17 @@
 package com.example.assign.product;
 
+import com.example.assign.gallery.GalleryDTO;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.function.Function;
 
 @Component
 @RequiredArgsConstructor
-public class ProductDTOMapper {
+public class ProductDTOMapper implements Function<Product, ProductDTO> {
 
     private final ModelMapper mapper;
 
@@ -34,4 +36,30 @@ public class ProductDTOMapper {
                 .toList();
     }
 
+    @Override
+    public ProductDTO apply(Product product) {
+        List<GalleryDTO> galleryDTOS = product.getGalleries().stream()
+                .map(item -> GalleryDTO.builder()
+                        .id(item.getId())
+                        .thumbnail(item.getThumbnail())
+                        .build())
+                .toList();
+        return ProductDTO.builder()
+                .id(product.getId())
+                .createdDate(product.getCreatedDate())
+                .createdBy(product.getCreatedBy())
+                .lastModifiedDate(product.getLastModifiedDate())
+                .lastModifiedBy(product.getLastModifiedBy())
+                .name(product.getName())
+                .shortDescription(product.getShortDescription())
+                .longDescription(product.getLongDescription())
+                .price(product.getPrice())
+                .quantity(product.getQuantity())
+                .discount(product.getDiscount())
+                .status(product.getStatus())
+                .galleries(galleryDTOS)
+                .categoryId(product.getCategory().getId())
+                .categoryName(product.getCategory().getName())
+                .build();
+    }
 }

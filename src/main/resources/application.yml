@@ -1,8 +1,8 @@
 spring:
   datasource:
-    url: jdbc:postgresql://dpg-cjdcq5gq339s73f0lbcg-a.oregon-postgres.render.com:5432/database_postgre_example_one
-    username: database_postgre_example_one_user
-    password: 22nzcGPgiAnT6e9bP8sgUm1bGWKp9wsc
+    url: jdbc:postgresql://localhost:5432/assign_java_five
+    username: postgres
+    password: password
     driver-class-name: org.postgresql.Driver
   jpa:
     show-sql: true
@@ -10,7 +10,7 @@ spring:
     properties:
       hibernate:
         # use_nationalized_character_data: true
-#        enable_lazy_load_no_trans: true
+        #        enable_lazy_load_no_trans: true
         format_sql: true
     hibernate:
       ddl-auto: none
@@ -18,16 +18,20 @@ spring:
   mail:
     host: smtp.gmail.com
     port: 587
-    username: hoangduynam20996@gmail.com
-    password: fuaycypcqvrdsjyy
+    username: staying.booking.online@gmail.com
+    password: cfoarjgkprvmvgvx
     properties:
       mail:
         smtp:
           auth: true
           starttls:
             enable: true
-
 server:
+  max-http-header-size: 20000
   tomcat:
     accesslog:
       enabled: true
+  port: 8080
+
+myapp:
+  http-link: http://localhost:8080/api/auth/confirm?token=

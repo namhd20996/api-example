@@ -13,7 +13,7 @@ public interface TokenRepo extends JpaRepository<com.example.assign.token.Token,
             SELECT t FROM Token t INNER JOIN User u ON t.user.id = u.id
             WHERE u.id = :id AND(t.expired = FALSE or t.revoked = FALSE)
             """)
-    List<com.example.assign.token.Token> findAllValidTokensByUser(UUID id);
+    List<Token> findAllValidTokensByUser(UUID id);
 
-    Optional<com.example.assign.token.Token> findByToken(String token);
+    Optional<Token> findByToken(String token);
 }

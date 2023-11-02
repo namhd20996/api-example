@@ -1,4 +1,4 @@
-package com.example.assign.orderdetails;
+package com.example.assign.orderdetail;
 
 import com.example.assign.order.Order;
 import com.example.assign.product.Product;
@@ -14,8 +14,8 @@ import java.util.UUID;
 @AllArgsConstructor
 @Builder
 @Entity
-@Table(name = "_orderdetails")
-public class OrderDetails {
+@Table(name = "_order_detail")
+public class OrderDetail {
 
     @Id
     @GeneratedValue(generator = "UUID")

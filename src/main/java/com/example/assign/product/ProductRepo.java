@@ -1,5 +1,6 @@
 package com.example.assign.product;
 
+import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
@@ -11,6 +12,11 @@ import java.util.UUID;
 public interface ProductRepo extends JpaRepository<Product, UUID> {
 
     Optional<Product> findProductByIdAndStatus(UUID uuid, Integer status);
+
+    @Query("""
+                SELECT o FROM Product  o WHERE LOWER(o.name) LIKE LOWER(CONCAT(?1, '%') ) 
+            """)
+    Optional<List<Product>> findProductsByNameStartingWithIngoreCase(String name);
 
     boolean existsByName(String name);
 
@@ -25,7 +31,7 @@ public interface ProductRepo extends JpaRepository<Product, UUID> {
             """)
     void updateQuantityByIdAndStatus(Integer quantity, UUID id, Integer status);
 
-    List<Product> findProductsByStatus(Integer status);
+    List<Product> findProductsByStatus(Integer status, Sort sort);
 
     @Query(value = """
                 SELECT c.name, SUM(d.total_money) FROM _category c

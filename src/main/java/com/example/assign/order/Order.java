@@ -1,6 +1,6 @@
 package com.example.assign.order;
 
-import com.example.assign.orderdetails.OrderDetails;
+import com.example.assign.orderdetail.OrderDetail;
 import com.example.assign.user.User;
 import jakarta.persistence.*;
 import lombok.*;
@@ -55,5 +55,5 @@ public class Order {
     @JoinColumn(name = "user_id")
     private User user;
     @OneToMany(mappedBy = "order")
-    private List<OrderDetails> orderDetails = new ArrayList<>();
+    private List<OrderDetail> orderDetails = new ArrayList<>();
 }

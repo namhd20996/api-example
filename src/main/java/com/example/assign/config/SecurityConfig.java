@@ -33,10 +33,14 @@ public class SecurityConfig {
                 .cors()
                 .and()
                 .authorizeHttpRequests(authConfig -> {
-                    authConfig.requestMatchers("/api/auth/**", "/*", "/WEB-INF/**").permitAll();
+                    authConfig.requestMatchers(
+                            "/api/auth/**",
+                            "/*",
+                            "/WEB-INF/**").permitAll();
                     authConfig.requestMatchers("/api/product/all",
                             "/api/product/get-id",
                             "/api/product/all/category",
+                            "/api/product/all/name",
                             "/api/product/").permitAll();
                     authConfig.requestMatchers("/api/category/get-all").permitAll();
                     authConfig.requestMatchers("/api/order/**").hasAnyAuthority("admin:read");

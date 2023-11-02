@@ -12,9 +12,9 @@ import java.util.UUID;
 
 @Repository
 @Transactional(readOnly = true)
-public interface ConfirmationTokenRepo extends JpaRepository<com.example.assign.confirmtoken.ConfirmationToken, UUID> {
+public interface ConfirmationTokenRepo extends JpaRepository<ConfirmationToken, UUID> {
 
-    Optional<com.example.assign.confirmtoken.ConfirmationToken> findByToken(String token);
+    Optional<ConfirmationToken> findByToken(String token);
 
     @Transactional
     @Modifying(clearAutomatically = true)

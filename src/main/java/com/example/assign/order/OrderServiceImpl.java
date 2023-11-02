@@ -3,8 +3,8 @@ package com.example.assign.order;
 import com.example.assign.constant.SystemConstant;
 import com.example.assign.exception.ApiRequestException;
 import com.example.assign.exception.ResourceNotFoundException;
-import com.example.assign.orderdetails.OrderDetails;
-import com.example.assign.orderdetails.OrderDetailsService;
+import com.example.assign.orderdetail.OrderDetail;
+import com.example.assign.orderdetail.OrderDetailService;
 import com.example.assign.product.ProductDTO;
 import com.example.assign.product.ProductDTOMapper;
 import com.example.assign.product.ProductService;
@@ -16,6 +16,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Date;
 import java.util.List;
+import java.util.Objects;
 import java.util.UUID;
 
 @Service
@@ -31,7 +32,7 @@ public class OrderServiceImpl implements OrderService {
 
     private final ProductService productService;
 
-    private final OrderDetailsService orderDetailsService;
+    private final OrderDetailService orderDetailsService;
 
 
     @Override
@@ -73,7 +74,7 @@ public class OrderServiceImpl implements OrderService {
                         throw new ApiRequestException(product.getName() + " invalid quantity");
                 }).toList();
 
-        List<OrderDetails> orderDetails = productDTOS.stream()
+        List<OrderDetail> orderDetails = productDTOS.stream()
                 .map(p -> {
                     ProductDTO product = getProductDTO(p);
                     productService.updateQuantityByIdAndStatus(
@@ -81,7 +82,7 @@ public class OrderServiceImpl implements OrderService {
                             product.getId(),
                             SystemConstant.STATUS_PRODUCT
                     );
-                    return OrderDetails.builder()
+                    return OrderDetail.builder()
                             .product(productDTOMapper.toEntity(product))
                             .price(p.getPrice())
                             .quantity(p.getQuantity())
@@ -100,7 +101,7 @@ public class OrderServiceImpl implements OrderService {
                 .address(request.getAddress())
                 .email(request.getEmail())
                 .totalMoney(totalMoney)
-                .status(SystemConstant.STATUS_ORDER_APPROVE)
+                .status(SystemConstant.STATUS_ORDER_PENDING)
                 .user((User) SecurityContextHolder.getContext().getAuthentication().getPrincipal())
                 .build();
 
@@ -110,10 +111,50 @@ public class OrderServiceImpl implements OrderService {
     }
 
     @Override
+    public void updateOrder(OrderUpdateRequest request, UUID oid) {
+        Order order = getOrder(oid);
+
+        if (!request.getFullName().equals(order.getFullName()))
+            order.setFullName(request.getFullName());
+
+        if (!order.getEmail().equals(request.getEmail()))
+            order.setEmail(request.getEmail());
+
+        if (!order.getPhoneNumber().equals(request.getPhoneNumber()))
+            order.setPhoneNumber(request.getPhoneNumber());
+
+        if (!order.getAddress().equals(request.getAddress()))
+            order.setAddress(request.getAddress());
+
+        if (!Objects.equals(order.getTotalMoney(), request.getTotalMoney()))
+            order.setTotalMoney(request.getTotalMoney());
+
+        orderRepo.save(order);
+    }
+
+    private Order getOrder(UUID oid) {
+        return orderRepo.findById(oid)
+                .orElseThrow(() -> new ResourceNotFoundException("find order by id " + oid + " not found!"));
+    }
+
+    @Override
     public void deleteOrder(UUID uuid) {
-        Order order = orderRepo.findById(uuid)
-                .orElseThrow(() -> new ResourceNotFoundException("order find by id: " + uuid + " not found!.."));
-        order.setStatus(SystemConstant.STATUS_ORDER_PENDING);
+        Order order = getOrder(uuid);
+        order.setStatus(SystemConstant.STATUS_ORDER_DECLINE);
+        orderRepo.save(order);
+    }
+
+    @Override
+    public void approveOrder(UUID uuid) {
+        Order order = getOrder(uuid);
+        order.setStatus(SystemConstant.STATUS_ORDER_APPROVE);
+        orderRepo.save(order);
+    }
+
+    @Override
+    public void shipOrder(UUID uuid) {
+        Order order = getOrder(uuid);
+        order.setStatus(SystemConstant.STATUS_ORDER_SHIP);
         orderRepo.save(order);
     }
 

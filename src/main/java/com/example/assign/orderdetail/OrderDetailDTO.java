@@ -1,4 +1,4 @@
-package com.example.assign.orderdetails;
+package com.example.assign.orderdetail;
 
 import com.example.assign.order.OrderDTO;
 import com.example.assign.product.ProductDTO;
@@ -14,7 +14,7 @@ import lombok.experimental.SuperBuilder;
 @NoArgsConstructor
 @AllArgsConstructor
 @SuperBuilder(toBuilder = true)
-public class OrderDetailsDTO extends BaseDTO {
+public class OrderDetailDTO extends BaseDTO {
 
     private Double price;
     private Integer quantity;

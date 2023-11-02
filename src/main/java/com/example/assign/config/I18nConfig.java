@@ -12,7 +12,7 @@ public class I18nConfig {
     public MessageSource messageSource() {
         ReloadableResourceBundleMessageSource ms = new ReloadableResourceBundleMessageSource();
         ms.setDefaultEncoding("UTF-8");
-        ms.setBasenames("classpath:i18n.messages");
+        ms.setBasenames("classpath:i18n/messages");
         return ms;
     }
 }

@@ -14,7 +14,12 @@ public interface OrderService {
 
     void addOrder(OrderAddRequest request);
 
+    void updateOrder(OrderUpdateRequest request, UUID oid);
+
     void deleteOrder(UUID uuid);
+
+    void approveOrder(UUID uuid);
+    void shipOrder(UUID uuid);
 
     List<OrderDTO> findOrdersByStatus(Integer status);
 

@@ -1,11 +1,17 @@
 package com.example.assign;
 
+import com.example.assign.exception.ResourceNotFoundException;
 import com.example.assign.role.Role;
 import com.example.assign.role.RoleRepo;
+import com.example.assign.user.User;
+import com.example.assign.user.UserRepo;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.Bean;
+import org.springframework.security.crypto.password.PasswordEncoder;
+
+import java.util.List;
 
 @SpringBootApplication
 public class AssignJavaFiveVersionOneApplication {
@@ -14,21 +20,29 @@ public class AssignJavaFiveVersionOneApplication {
         SpringApplication.run(AssignJavaFiveVersionOneApplication.class, args);
     }
 
-//    @Bean
-//    public CommandLineRunner commandLineRunner(RoleRepo roleRepo) {
-//        return args -> {
-//            Role a = new Role("ADMIN", "admin:read");
-//            Role aa = new Role("ADMIN", "admin:create");
-//            Role aaa = new Role("ADMIN", "admin:update");
-//            Role aaaa = new Role("ADMIN", "admin:delete");
-//            Role u = new Role("USER", "user:read");
-//            Role m = new Role("MANAGER", "manager:read");
-//            roleRepo.save(a);
-//            roleRepo.save(aa);
-//            roleRepo.save(aaa);
-//            roleRepo.save(aaaa);
-//            roleRepo.save(u);
-//            roleRepo.save(m);
-//        };
-//    }
+    @Bean
+    public CommandLineRunner commandLineRunner(RoleRepo roleRepo, PasswordEncoder encoder, UserRepo userRepo) {
+        return args -> {
+//            List<Role> roles = List.of(new Role("ADMIN", "admin:read"),
+//                    new Role("ADMIN", "admin:create"),
+//                    new Role("ADMIN", "admin:update"),
+//                    new Role("ADMIN", "admin:delete"),
+//                    new Role("USER", "user:read"),
+//                    new Role("MANAGER", "manager:read")
+//            );
+//            roleRepo.saveAllAndFlush(roles);
+//
+//            List<Role> rolesAdd = roleRepo.findRolesByName("ADMIN")
+//                    .orElseThrow(() -> new ResourceNotFoundException("Role with name not found"));
+//            userRepo.saveAndFlush(
+//                    User.builder()
+//                            .username("sellsad")
+//                            .email("hoangduynam20996@gmail.com")
+//                            .password(encoder.encode("123@bBbb"))
+//                            .status(1)
+//                            .roles(rolesAdd)
+//                            .build()
+//            );
+        };
+    }
 }

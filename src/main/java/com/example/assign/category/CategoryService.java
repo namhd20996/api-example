@@ -7,6 +7,10 @@ public interface CategoryService {
 
     CategoryDTO addCategory(CategoryDTO dto);
 
+    void updateCategory(CategoryUpdateRequest request);
+
+    void deleteCategory(UUID categoryId);
+
     List<CategoryDTO> findAllCategory();
 
     CategoryDTO findOneById(UUID id);

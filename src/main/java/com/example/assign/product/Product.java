@@ -2,7 +2,7 @@ package com.example.assign.product;
 
 import com.example.assign.category.Category;
 import com.example.assign.gallery.Gallery;
-import com.example.assign.orderdetails.OrderDetails;
+import com.example.assign.orderdetail.OrderDetail;
 import com.example.assign.util.BaseEntity;
 import jakarta.persistence.*;
 import lombok.*;
@@ -43,6 +43,6 @@ public class Product extends BaseEntity {
     @OneToMany(mappedBy = "product", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     private List<Gallery> galleries = new ArrayList<>();
     @OneToMany(mappedBy = "product", fetch = FetchType.LAZY)
-    private List<OrderDetails> orderDetails = new ArrayList<>();
+    private List<OrderDetail> orderDetails = new ArrayList<>();
 
 }

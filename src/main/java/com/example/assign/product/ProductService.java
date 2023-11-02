@@ -9,7 +9,7 @@ public interface ProductService {
 
     boolean existsByName(String name);
 
-    List<ProductDTO> findAllProduct();
+    List<ProductDTO> findAllProduct(String price, String bestSale, String popular);
 
     ProductResponse findAllProduct(Integer page, Integer limit);
 
@@ -21,9 +21,13 @@ public interface ProductService {
 
     void updateQuantityByIdAndStatus(Integer quantity, UUID id, Integer status);
 
-    List<ProductDTO> findProductsByStatus(Integer status);
+    List<ProductDTO> findProductsByStatus(String price, String bestSale, String popular, Integer status);
+
+    List<ProductDTO> findProductsByName(String name);
 
     void deleteProduct(UUID uuid);
+
+    void updateProduct(ProductUpdateRequest request, UUID categoryId);
 
     List<ProductStatisticalRevenue> findAllRevenueByCategory();
 
