@@ -10,7 +10,7 @@ import lombok.*;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class AuthenticationRequest {
+public class UserLoginRequest {
     @NotBlank
     @Pattern(message = "regex username not valid", regexp = "^[a-zA-Z\\d]+$")
     private String username;

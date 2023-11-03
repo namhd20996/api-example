@@ -34,16 +34,16 @@ public class SecurityConfig {
                 .and()
                 .authorizeHttpRequests(authConfig -> {
                     authConfig.requestMatchers(
-                            "/api/auth/**",
+                            "/api/v1/auth/**",
                             "/*",
                             "/WEB-INF/**").permitAll();
-                    authConfig.requestMatchers("/api/product/all",
-                            "/api/product/get-id",
-                            "/api/product/all/category",
-                            "/api/product/all/name",
-                            "/api/product/").permitAll();
-                    authConfig.requestMatchers("/api/category/get-all").permitAll();
-                    authConfig.requestMatchers("/api/order/**").hasAnyAuthority("admin:read");
+                    authConfig.requestMatchers(
+                            "/api/v1/product/all",
+                            "/api/v1/product/get-id",
+                            "/api/v1/product/all/category",
+                            "/api/v1/product/all/name",
+                            "/api/v1/product/").permitAll();
+                    authConfig.requestMatchers("/api/v1/category/get-all").permitAll();
                     authConfig.anyRequest().authenticated();
                 })
                 .csrf(AbstractHttpConfigurer::disable)
@@ -53,7 +53,7 @@ public class SecurityConfig {
                 .authenticationProvider(authenticationProvider)
                 .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class)
                 .logout()
-                .logoutUrl("/api/auth/logout")
+                .logoutUrl("/api/v1/auth/logout")
                 .addLogoutHandler(logoutHandler)
                 .logoutSuccessHandler((request, response, authentication) -> SecurityContextHolder.clearContext());
         return http.build();

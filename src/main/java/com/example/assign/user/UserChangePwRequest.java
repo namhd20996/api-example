@@ -11,7 +11,7 @@ import lombok.Setter;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-public class UserChangePasswordRequest {
+public class UserChangePwRequest {
     @NotNull
     @Pattern(
             message = "regex password",

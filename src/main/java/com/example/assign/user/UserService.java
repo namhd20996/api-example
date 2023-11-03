@@ -1,7 +1,6 @@
 package com.example.assign.user;
 
 import java.util.List;
-import java.util.Optional;
 import java.util.UUID;
 
 public interface UserService {
@@ -10,7 +9,7 @@ public interface UserService {
 
     void register(UserRegistrationRequest dto);
 
-    UserDTO authenticate(AuthenticationRequest dto);
+    UserDTO authenticate(UserLoginRequest dto);
 
     String confirmToken(String token);
 

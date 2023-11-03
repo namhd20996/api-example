@@ -36,7 +36,7 @@ public interface ProductRepo extends JpaRepository<Product, UUID> {
     @Query(value = """
                 SELECT c.name, SUM(d.total_money) FROM _category c
                 JOIN _product p ON p.category_id = c.id
-                JOIN _orderdetails d ON d.product_id = p.id
+                JOIN _order_detail d ON d.product_id = p.id
                 GROUP BY c.id
             """, nativeQuery = true)
     List<Object[]> findAllRevenueByCategory();
