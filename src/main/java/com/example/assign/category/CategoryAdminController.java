@@ -19,7 +19,9 @@ public class CategoryAdminController {
 
     @PreAuthorize("hasAnyAuthority(@adminCreate)")
     @PostMapping("/add")
-    public ResponseEntity<CategoryDTO> addCategory(@RequestBody CategoryDTO dto) {
+    public ResponseEntity<CategoryDTO> addCategory(
+            @RequestBody CategoryDTO dto
+    ) {
         return new ResponseEntity<>(categoryService.addCategory(dto), HttpStatus.CREATED);
     }
 
@@ -31,14 +33,18 @@ public class CategoryAdminController {
 
     @PreAuthorize("hasAnyAuthority(@adminUpdate)")
     @PutMapping("/update")
-    public ResponseEntity<?> updateCategory(@Validated @RequestBody CategoryUpdateRequest request) {
+    public ResponseEntity<?> updateCategory(
+            @Validated @RequestBody CategoryUpdateRequest request
+    ) {
         categoryService.updateCategory(request);
         return new ResponseEntity<>(HttpStatus.OK);
     }
 
     @PreAuthorize("hasAnyAuthority(@adminDelete)")
     @DeleteMapping("/delete/{categoryId}")
-    public ResponseEntity<?> deleteCategory(@PathVariable("categoryId") UUID categoryId) {
+    public ResponseEntity<?> deleteCategory(
+            @PathVariable("categoryId") UUID categoryId
+    ) {
         categoryService.deleteCategory(categoryId);
         return new ResponseEntity<>(HttpStatus.OK);
     }

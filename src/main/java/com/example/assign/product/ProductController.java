@@ -25,24 +25,31 @@ public class ProductController {
     }
 
     @GetMapping("/all/manager/{page}/{limit}")
-    public ResponseEntity<ProductResponse> getProducts(@PathVariable("page") Integer page,
-                                                       @PathVariable("limit") Integer limit) {
+    public ResponseEntity<ProductResponse> getProducts(
+            @PathVariable("page") Integer page,
+            @PathVariable("limit") Integer limit
+    ) {
         return new ResponseEntity<>(productService.findAllProduct(page, limit), HttpStatus.OK);
     }
 
     @GetMapping("/all/name")
-    public ResponseEntity<List<ProductDTO>> getProductsByName(@RequestParam("name") String name
+    public ResponseEntity<List<ProductDTO>> getProductsByName(
+            @RequestParam("name") String name
     ) {
         return new ResponseEntity<>(productService.findProductsByName(name), HttpStatus.OK);
     }
 
     @GetMapping("/all/category")
-    public ResponseEntity<List<ProductDTO>> getAllByCategory(@RequestParam("id") UUID id) {
+    public ResponseEntity<List<ProductDTO>> getAllByCategory(
+            @RequestParam("id") UUID id
+    ) {
         return new ResponseEntity<>(productService.findAllByCategoryId(id), HttpStatus.OK);
     }
 
     @GetMapping("/get-id")
-    public ResponseEntity<ProductDTO> getProductById(@RequestParam("id") UUID id) {
+    public ResponseEntity<ProductDTO> getProductById(
+            @RequestParam("id") UUID id
+    ) {
         return new ResponseEntity<>(productService.findOneProductById(id), HttpStatus.OK);
     }
 

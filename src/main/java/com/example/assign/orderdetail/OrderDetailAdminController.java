@@ -21,7 +21,9 @@ public class OrderDetailAdminController {
 
     @PreAuthorize("hasAnyAuthority(@adminRead)")
     @GetMapping("{oid}")
-    public ResponseEntity<List<OrderDetailResponse>> getOrderDetailByOrderId(@PathVariable("oid") UUID oid) {
+    public ResponseEntity<List<OrderDetailResponse>> getOrderDetailByOrderId(
+            @PathVariable("oid") UUID oid
+    ) {
         return new ResponseEntity<>(orderDetailService.findOrderDetailByOrderId(oid), HttpStatus.OK);
     }
 }

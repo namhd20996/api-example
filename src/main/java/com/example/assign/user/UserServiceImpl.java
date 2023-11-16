@@ -14,30 +14,33 @@ import com.example.assign.role.RoleRepo;
 import com.example.assign.token.Token;
 import com.example.assign.token.TokenRepo;
 import com.example.assign.token.TokenType;
+import com.example.assign.util.BaseUrlService;
+import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
-import org.springframework.core.env.Environment;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.security.oauth2.core.user.OAuth2User;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.net.URLEncoder;
+import java.nio.charset.StandardCharsets;
 import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Random;
-import java.util.UUID;
+import java.util.*;
 
 @Service
 @RequiredArgsConstructor
 @Transactional
 public class UserServiceImpl implements UserService {
 
+    private final BaseUrlService baseUrlService;
+
     private final UserRepo userRepo;
 
-    private final UserDTOMapper converter;
+    private final UserDTOMapper userDTOMapper;
 
     private final JwtService jwtService;
 
@@ -51,9 +54,9 @@ public class UserServiceImpl implements UserService {
 
     private final EmailService emailService;
 
-    private final Environment environment;
-
     private final ConfirmationTokenService confirmationTokenService;
+
+    private final HttpServletResponse resp;
 
     @Override
     public boolean existsUserByUsername(String username) {
@@ -90,7 +93,7 @@ public class UserServiceImpl implements UserService {
                         userSave
                 )
         );
-        String link = environment.getProperty("myapp.http-link") + jwtToken;
+        String link = baseUrlService.getBaseUrl() + "/api/v1/auth/confirm?token=" + jwtToken;
         emailService.send(userSave.getEmail(), buildEmail(userSave.getUsername(), link, "", false));
         saveUserToken(userSave, jwtToken);
     }
@@ -150,12 +153,53 @@ public class UserServiceImpl implements UserService {
         );
         User user = userRepo.findUserByUsernameAndStatus(request.getUsername(), SystemConstant.STATUS_AUTH)
                 .orElseThrow(() -> new UsernameNotFoundException("User not found!..."));
-        UserDTO userDTO = converter.toDTO(user);
+        UserDTO userDTO = userDTOMapper.toDTO(user);
         var jwtToken = jwtService.generateToken(user);
         userDTO.setToken(jwtToken);
         revokeAllUserTokens(user);
         saveUserToken(user, jwtToken);
         return userDTO;
+    }
+
+    @Override
+    public void authenticate(OAuth2User oAuth2User) {
+        try {
+            List<Role> roles = roleRepo.findRolesByName("USER")
+                    .orElseThrow(() -> new ResourceNotFoundException("Role with name not found"));
+
+            User user = null;
+            if (!userRepo.existsUserByUsername(oAuth2User.getAttribute("email"))) {
+                user = userRepo.save(
+                        User.builder()
+                                .username(oAuth2User.getAttribute("email"))
+                                .email(oAuth2User.getAttribute("email"))
+                                .avatar(oAuth2User.getAttribute("picture"))
+                                .roles(roles)
+                                .password(randomPassword())
+                                .status(SystemConstant.STATUS_AUTH)
+                                .build()
+                );
+            }
+
+            if (userRepo.existsUserByUsername(oAuth2User.getAttribute("email"))) {
+                user = userRepo.findUserByUsernameAndStatus(oAuth2User.getAttribute("email"), SystemConstant.STATUS_AUTH)
+                        .orElseThrow(() -> new ResourceNotFoundException("find user not found!"));
+            }
+
+            assert user != null;
+            String encodedUsername = URLEncoder.encode(Objects.requireNonNull(oAuth2User.getAttribute("name")), StandardCharsets.UTF_8);
+            String encodedEmail = URLEncoder.encode(user.getEmail(), StandardCharsets.UTF_8);
+            String encodedAvatar = URLEncoder.encode(user.getAvatar(), StandardCharsets.UTF_8);
+
+            var jwtToken = jwtService.generateToken(user);
+            String encodedToken = URLEncoder.encode(jwtToken, StandardCharsets.UTF_8);
+            revokeAllUserTokens(user);
+            saveUserToken(user, jwtToken);
+            resp.sendRedirect("http://127.0.0.1:5501/Front-End-Frameworks_backup/assignment/index.html#!/" +
+                    "?name=" + encodedUsername + "&email=" + encodedEmail + "&avatar=" + encodedAvatar + "&token=" + encodedToken + "&role=USER");
+        } catch (Exception e) {
+            System.out.println(e.getMessage());
+        }
     }
 
     @Override
@@ -220,7 +264,7 @@ public class UserServiceImpl implements UserService {
     public List<UserDTO> findUsersByStatus(Integer status) {
         return userRepo.findUsersByStatus(status)
                 .stream()
-                .map(converter::toDTO)
+                .map(userDTOMapper::toDTO)
                 .toList();
     }
 

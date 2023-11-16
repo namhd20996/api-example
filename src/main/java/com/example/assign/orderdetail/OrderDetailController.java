@@ -17,13 +17,17 @@ public class OrderDetailController {
     private final OrderDetailService orderDetailService;
 
     @PostMapping("/get-email")
-    public ResponseEntity<List<OrderDetailDTO>> getAllByEmail(@RequestParam("email") String email) {
+    public ResponseEntity<List<OrderDetailDTO>> getAllByEmail(
+            @RequestParam("email") String email
+    ) {
         return new ResponseEntity<>(orderDetailService.findProductsByEmail(email), HttpStatus.OK);
     }
 
     @PreAuthorize("hasAnyAuthority('admin:read')")
     @GetMapping("{oid}")
-    public ResponseEntity<List<OrderDetailResponse>> getOrderDetailByOrderId(@PathVariable("oid") UUID oid) {
+    public ResponseEntity<List<OrderDetailResponse>> getOrderDetailByOrderId(
+            @PathVariable("oid") UUID oid
+    ) {
         return new ResponseEntity<>(orderDetailService.findOrderDetailByOrderId(oid), HttpStatus.OK);
     }
 }

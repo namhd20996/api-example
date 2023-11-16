@@ -4,6 +4,8 @@ import com.example.assign.validation.ValidationHandle;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.oauth2.core.user.OAuth2User;
 import org.springframework.validation.Errors;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
@@ -17,21 +19,44 @@ public class UserController {
 
     private final ValidationHandle validationHandle;
 
+
+    @GetMapping("/oauth2-success")
+    public ResponseEntity<?> authenticate(
+            @AuthenticationPrincipal OAuth2User oauth2User
+    ) {
+        userService.authenticate(oauth2User);
+        return new ResponseEntity<>(HttpStatus.OK);
+    }
+
+    @GetMapping("/oauth2-fail")
+    public ResponseEntity<?> fail() {
+        return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+    }
+
     @PostMapping("/authenticate")
-    public ResponseEntity<?> authenticate(@Validated @RequestBody UserLoginRequest request, Errors errors) {
+    public ResponseEntity<?> authenticate(
+            @Validated @RequestBody UserLoginRequest request,
+            Errors errors
+    ) {
         validationHandle.handleValidate(errors);
         return new ResponseEntity<>(userService.authenticate(request), HttpStatus.OK);
     }
 
     @PostMapping("/register")
-    public ResponseEntity<?> register(@Validated @RequestBody UserRegistrationRequest request, Errors errors) {
+    public ResponseEntity<?> register(
+            @Validated @RequestBody UserRegistrationRequest request,
+            Errors errors
+    ) {
         validationHandle.handleValidate(errors);
         userService.register(request);
         return new ResponseEntity<>(HttpStatus.CREATED);
     }
 
     @PutMapping("/update")
-    public ResponseEntity<?> update(@Validated @RequestBody UserUpdateRequest request, Errors errors) {
+    public ResponseEntity<?> update(
+            @Validated @RequestBody UserUpdateRequest request,
+            Errors errors
+    ) {
         validationHandle.handleValidate(errors);
         userService.updateUser(request);
         return new ResponseEntity<>(HttpStatus.OK);
@@ -49,8 +74,10 @@ public class UserController {
     }
 
     @PutMapping("/change-password")
-    public ResponseEntity<?> changePassword(@Validated @RequestBody UserChangePwRequest request,
-                                            Errors errors) {
+    public ResponseEntity<?> changePassword(
+            @Validated @RequestBody UserChangePwRequest request,
+            Errors errors
+    ) {
         validationHandle.handleValidate(errors);
         userService.changePassword(request.getPasswordOld(), request.getPasswordNew());
         return new ResponseEntity<>(HttpStatus.OK);

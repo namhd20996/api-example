@@ -1,5 +1,6 @@
 package com.example.assign.config;
 
+import com.example.assign.exception.CustomAuthenticationEntryPoint;
 import com.example.assign.jwt.JwtAuthenticationFilter;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
@@ -11,6 +12,7 @@ import org.springframework.security.config.annotation.web.configuration.EnableWe
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.web.AuthenticationEntryPoint;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.security.web.authentication.logout.LogoutHandler;
@@ -27,11 +29,20 @@ public class SecurityConfig {
 
     private final LogoutHandler logoutHandler;
 
+    @Bean(name = "customAuthenticationEntryPoint")
+    public AuthenticationEntryPoint customAuthenticationEntryPoint() {
+        return new CustomAuthenticationEntryPoint();
+    }
+
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
+                .exceptionHandling()
+                .authenticationEntryPoint(customAuthenticationEntryPoint())
+                .and()
                 .cors()
                 .and()
+                .csrf(AbstractHttpConfigurer::disable)
                 .authorizeHttpRequests(authConfig -> {
                     authConfig.requestMatchers(
                             "/api/v1/auth/**",
@@ -46,16 +57,22 @@ public class SecurityConfig {
                     authConfig.requestMatchers("/api/v1/category/get-all").permitAll();
                     authConfig.anyRequest().authenticated();
                 })
-                .csrf(AbstractHttpConfigurer::disable)
                 .sessionManagement()
-                .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
+                .sessionCreationPolicy(SessionCreationPolicy.IF_REQUIRED)
                 .and()
                 .authenticationProvider(authenticationProvider)
                 .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class)
                 .logout()
                 .logoutUrl("/api/v1/auth/logout")
                 .addLogoutHandler(logoutHandler)
-                .logoutSuccessHandler((request, response, authentication) -> SecurityContextHolder.clearContext());
+                .logoutSuccessHandler((request, response, authentication) -> SecurityContextHolder.clearContext())
+                .and()
+                .oauth2Login()
+                .defaultSuccessUrl("/api/v1/auth/oauth2-success")
+                .failureUrl("/api/v1/auth/oath2-fail")
+                .authorizationEndpoint()
+                .baseUri("/api/v1/auth/oauth2/authorization");
+
         return http.build();
     }
 }

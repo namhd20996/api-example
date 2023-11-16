@@ -1,4 +1,6 @@
 spring:
+  main:
+    allow-bean-definition-overriding: true
   datasource:
     url: jdbc:postgresql://localhost:5432/assign_java_five
     username: postgres
@@ -13,7 +15,7 @@ spring:
         #        enable_lazy_load_no_trans: true
         format_sql: true
     hibernate:
-      ddl-auto: none
+      ddl-auto: update
     database-platform: org.hibernate.dialect.PostgreSQLDialect
   mail:
     host: smtp.gmail.com
@@ -26,15 +28,32 @@ spring:
           auth: true
           starttls:
             enable: true
+  security:
+    oauth2:
+      client:
+        registration:
+          github:
+            client-id: Iv1.b2574f3c073f3fb3
+            client-secret: 16a4408eadea47af809b58577ed1964c0b7d5e11
+          google:
+            client-id: 623824779416-l0ct97vl02fj8cs223ieo8tqsp5q0nrm.apps.googleusercontent.com
+            client-secret: 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
+          facebook:
+            client-id: 1429325750953426
+            client-secret: 9234fed3c446cb8c4803a46d49705f68
+# Bug sercurity
+logging:
+  level:
+    org:
+      springframework:
+        security: DEBUG
+
 server:
   max-http-header-size: 20000
   tomcat:
     accesslog:
       enabled: true
   port: 8080
-
-myapp:
-  http-link: http://localhost:8080/api/v1/auth/confirm?token=
 
 #Permission
 admin:
