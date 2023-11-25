@@ -1,6 +1,5 @@
 package com.example.assign.config;
 
-import com.example.assign.exception.CustomAuthenticationEntryPoint;
 import com.example.assign.jwt.JwtAuthenticationFilter;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
@@ -29,16 +28,13 @@ public class SecurityConfig {
 
     private final LogoutHandler logoutHandler;
 
-    @Bean(name = "customAuthenticationEntryPoint")
-    public AuthenticationEntryPoint customAuthenticationEntryPoint() {
-        return new CustomAuthenticationEntryPoint();
-    }
+    private final AuthenticationEntryPoint authenticationEntryPoint;
 
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
                 .exceptionHandling()
-                .authenticationEntryPoint(customAuthenticationEntryPoint())
+                .authenticationEntryPoint(authenticationEntryPoint)
                 .and()
                 .cors()
                 .and()

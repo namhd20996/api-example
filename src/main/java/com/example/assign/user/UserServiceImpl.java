@@ -164,16 +164,24 @@ public class UserServiceImpl implements UserService {
     @Override
     public void authenticate(OAuth2User oAuth2User) {
         try {
+            String urlResp = "http://127.0.0.1:5501/Front-End-Frameworks_backup/assignment/index.html#!/";
+//            String urlResp = "https://webhnam.shop/index.html#!/";
             List<Role> roles = roleRepo.findRolesByName("USER")
                     .orElseThrow(() -> new ResourceNotFoundException("Role with name not found"));
 
             User user = null;
-            if (!userRepo.existsUserByUsername(oAuth2User.getAttribute("email"))) {
+            String username = oAuth2User.getAttribute("email") != null
+                    ? oAuth2User.getAttribute("email")
+                    : oAuth2User.getAttribute("login");
+            String avatar = oAuth2User.getAttribute("picture") != null
+                    ? oAuth2User.getAttribute("picture")
+                    : oAuth2User.getAttribute("avatar_url");
+            if (!userRepo.existsUserByUsername(oAuth2User.getAttribute(username))) {
                 user = userRepo.save(
                         User.builder()
-                                .username(oAuth2User.getAttribute("email"))
-                                .email(oAuth2User.getAttribute("email"))
-                                .avatar(oAuth2User.getAttribute("picture"))
+                                .username(username)
+                                .email(username)
+                                .avatar(avatar)
                                 .roles(roles)
                                 .password(randomPassword())
                                 .status(SystemConstant.STATUS_AUTH)
@@ -181,8 +189,8 @@ public class UserServiceImpl implements UserService {
                 );
             }
 
-            if (userRepo.existsUserByUsername(oAuth2User.getAttribute("email"))) {
-                user = userRepo.findUserByUsernameAndStatus(oAuth2User.getAttribute("email"), SystemConstant.STATUS_AUTH)
+            if (userRepo.existsUserByUsername(username)) {
+                user = userRepo.findUserByUsernameAndStatus(username, SystemConstant.STATUS_AUTH)
                         .orElseThrow(() -> new ResourceNotFoundException("find user not found!"));
             }
 
@@ -195,8 +203,7 @@ public class UserServiceImpl implements UserService {
             String encodedToken = URLEncoder.encode(jwtToken, StandardCharsets.UTF_8);
             revokeAllUserTokens(user);
             saveUserToken(user, jwtToken);
-            resp.sendRedirect("http://127.0.0.1:5501/Front-End-Frameworks_backup/assignment/index.html#!/" +
-                    "?name=" + encodedUsername + "&email=" + encodedEmail + "&avatar=" + encodedAvatar + "&token=" + encodedToken + "&role=USER");
+            resp.sendRedirect(urlResp + "?name=" + encodedUsername + "&email=" + encodedEmail + "&avatar=" + encodedAvatar + "&token=" + encodedToken + "&role=USER");
         } catch (Exception e) {
             System.out.println(e.getMessage());
         }
@@ -294,6 +301,18 @@ public class UserServiceImpl implements UserService {
                 "        <p style=\"font-size: 16px;\">Chúc mừng bạn đã kích hoạt thành công tài khoản!</p>\n" +
                 "        <p style=\"font-size: 16px;\">Bạn có thể quay lại trang web của chúng tôi để đăng nhập!</p>\n" +
                 "        <a href=\"#\" style=\"background-color: #fff; color: #007bff; text-decoration: none; font-size: 16px; padding: 10px 20px; border-radius: 5px;\">Bắt đầu</a>\n" +
+                "    </div>\n" +
+                "</body>";
+    }
+
+    @Override
+    public String responseLoginOAuth2Fail() {
+        return "<body style=\"font-family: Arial, sans-serif; background-color: #f4f4f4; text-align: center; margin: 0; padding: 0; height: 100vh; display: flex; align-items: center; justify-content: center;\">\n" +
+                "\n" +
+                "    <div style=\"background-color: #fff; padding: 20px; border-radius: 5px; box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);\">\n" +
+                "        <h1 style=\"color: #ff6347;\">Login Failed</h1>\n" +
+                "        <p>Sorry, your login attempt was unsuccessful. Please check your credentials and try again.</p>\n" +
+                "        <a style=\"margin-top: 20px; display: block; text-decoration: none; color: #3498db; font-weight: bold;\" href=\"/\">Go to Home</a>\n" +
                 "    </div>\n" +
                 "</body>";
     }

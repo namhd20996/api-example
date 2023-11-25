@@ -17,6 +17,8 @@ public interface UserService {
 
     String confirmToken(String token);
 
+    String responseLoginOAuth2Fail();
+
     boolean existsByEmail(String email);
 
     void updateUser(UserUpdateRequest dto);

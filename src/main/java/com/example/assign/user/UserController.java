@@ -19,7 +19,6 @@ public class UserController {
 
     private final ValidationHandle validationHandle;
 
-
     @GetMapping("/oauth2-success")
     public ResponseEntity<?> authenticate(
             @AuthenticationPrincipal OAuth2User oauth2User
@@ -29,8 +28,8 @@ public class UserController {
     }
 
     @GetMapping("/oauth2-fail")
-    public ResponseEntity<?> fail() {
-        return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+    public ResponseEntity<String> fail() {
+        return new ResponseEntity<>(userService.responseLoginOAuth2Fail(), HttpStatus.UNAUTHORIZED);
     }
 
     @PostMapping("/authenticate")
