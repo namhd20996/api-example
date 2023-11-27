@@ -168,7 +168,6 @@ public class UserServiceImpl implements UserService {
 //            String urlResp = "https://webhnam.shop/index.html#!/";
             List<Role> roles = roleRepo.findRolesByName("USER")
                     .orElseThrow(() -> new ResourceNotFoundException("Role with name not found"));
-
             User user = null;
             String username = oAuth2User.getAttribute("email") != null
                     ? oAuth2User.getAttribute("email")
@@ -176,7 +175,7 @@ public class UserServiceImpl implements UserService {
             String avatar = oAuth2User.getAttribute("picture") != null
                     ? oAuth2User.getAttribute("picture")
                     : oAuth2User.getAttribute("avatar_url");
-            if (!userRepo.existsUserByUsername(oAuth2User.getAttribute(username))) {
+            if (!userRepo.existsUserByUsername(username)) {
                 user = userRepo.save(
                         User.builder()
                                 .username(username)

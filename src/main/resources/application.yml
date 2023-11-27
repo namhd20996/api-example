@@ -1,8 +1,8 @@
 spring:
   datasource:
-    url: jdbc:postgresql://localhost:5432/assign_java_five
+    url: jdbc:postgresql://${ASSIGN_JAVA_FIVE_NETWORK:localhost}:5432/${DB_ASSIGN_JAVA_FIVE:assign_java_five}
     username: postgres
-    password: password
+    password: ${ASSIGN_JAVA_FIVE_PASSWORD:password}
     driver-class-name: org.postgresql.Driver
   jpa:
     show-sql: true
@@ -31,14 +31,14 @@ spring:
       client:
         registration:
           github:
-            client-id: Iv1.b2574f3c073f3fb3
-            client-secret: 16a4408eadea47af809b58577ed1964c0b7d5e11
+            client-id: ${GITHUB_CLIENT_ID}
+            client-secret: ${GITHUB_CLIENT_SECRET}
           google:
-            client-id: 623824779416-cqn86p9355i3nmaivm3vhihnc5gt76t2.apps.googleusercontent.com
-            client-secret: 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
+            client-id: ${GOOGLE_CLIENT_ID}
+            client-secret: ${GOOGLE_CLIENT_SECRET}
           facebook:
-            client-id: 869634628100946
-            client-secret: 3088305711bea07d1e85678c68152f42
+            client-id: ${FACEBOOK_CLIENT_ID}
+            client-secret: ${FACEBOOK_CLIENT_SECRET}
 # Bug sercurity
 logging:
   level:
