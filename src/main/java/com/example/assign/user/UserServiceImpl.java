@@ -17,6 +17,7 @@ import com.example.assign.token.TokenType;
 import com.example.assign.util.BaseUrlService;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -58,6 +59,9 @@ public class UserServiceImpl implements UserService {
 
     private final HttpServletResponse resp;
 
+    @Value("${url.response}")
+    private String urlResp;
+
     @Override
     public boolean existsUserByUsername(String username) {
         return userRepo.existsUserByUsername(username);
@@ -73,7 +77,6 @@ public class UserServiceImpl implements UserService {
         if (isValidEmail) {
             throw new ResourceDuplicateException("email is exists!..");
         }
-        // List<Role> roles = roleRepo.findRoleByCode("admin:create").stream().toList();
         List<Role> roles = roleRepo.findRolesByName("USER")
                 .orElseThrow(() -> new ResourceNotFoundException("Role with name not found"));
         User user = User.builder()
@@ -164,8 +167,6 @@ public class UserServiceImpl implements UserService {
     @Override
     public void authenticate(OAuth2User oAuth2User) {
         try {
-            String urlResp = "http://127.0.0.1:5501/Front-End-Frameworks_backup/assignment/index.html#!/";
-//            String urlResp = "https://webhnam.shop/index.html#!/";
             List<Role> roles = roleRepo.findRolesByName("USER")
                     .orElseThrow(() -> new ResourceNotFoundException("Role with name not found"));
             User user = null;
@@ -182,7 +183,7 @@ public class UserServiceImpl implements UserService {
                                 .email(username)
                                 .avatar(avatar)
                                 .roles(roles)
-                                .password(randomPassword())
+                                .password(passwordEncoder.encode(randomPassword()))
                                 .status(SystemConstant.STATUS_AUTH)
                                 .build()
                 );
